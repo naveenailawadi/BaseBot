@@ -1,0 +1,6 @@
+[submodule "platforms/local-api-client-python"]
+	path = platforms/local-api-client-python
+	url = https://github.com/kameleo-io/local-api-client-python
+[submodule "platforms/kameleoSDK"]
+	path = platforms/kameleoSDK
+	url = https://github.com/kameleo-io/local-api-client-python

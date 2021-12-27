@@ -7,14 +7,16 @@ import time
 # set the default profile
 DEFAULT_PROFILE = {
     "name": "Windows stealthfox profile with random settings (LA)",
-    "os": "win",
-    "browser": "stealthfox",
     "navigator": {
         "language": "English"
     }
 }
 
-BASE_URL = 'http://127.0.0.1:35000/api/v2'
+DEFAULT_OS = "win"
+DEFAULT_BROWSER = "stealthfox"
+
+V1_URL = 'http://127.0.0.1:35000/api/v1/profile'
+V2_URL = 'http://127.0.0.1:35000/api/v2'
 
 
 # make a manager
@@ -23,16 +25,19 @@ class MLAManager(Manager):
         self.import_proxies(filename)
 
     # make a function to make the profile
-    def make_profile(self, profile=DEFAULT_PROFILE):
-        # change the profile name
+    def make_profile(self, profile=DEFAULT_PROFILE, operating_system=DEFAULT_OS, browser=DEFAULT_BROWSER):
+        # set the profile name, os, and browser
         profile['name'] = f"Random Profile {self.random_string()}"
+        profile['os'] = operating_system
+        profile['browser'] = browser
 
-        # change the profile proxy
+        # set the profile proxy
         profile['network'] = {'proxy': self.random_proxy()}
 
         # request body is the profile
         try:
-            info = requests.post(f"{BASE_URL}/profile", json=profile).json()
+            info = requests.post(f"{V2_URL}/profile", json=profile).json()
+            print(f"Make profile response: {info}")
         except JSONDecodeError:
             print(f"Unable to make {profile}")
             return None
@@ -48,27 +53,57 @@ class MLAManager(Manager):
 
     # make a function to delete a profile
     def delete_profile(self, profile_id):
-        try:
-            raw = requests.delete(f"{BASE_URL}/profile/{profile_id}")
-        except JSONDecodeError:
-            print(f"Unable to delete {profile_id}")
-            return False
+        raw = requests.delete(f"{V2_URL}/profile/{profile_id}")
 
         if raw.status_code == 204:
-            deleted = True
-        else:
-            deleted = False
+            # check if there is an error in the json
+            try:
+                info = raw.json()
+            except JSONDecodeError:
+                # multilogin gives no api response if it works
+                return True
 
-        return deleted
+            print(info)
+            if info['status'] == 'ERROR':
+                print(
+                    f"API error from multilogin: {info['message']} ({profile_id})")
+                return False
+        else:
+            return False
 
     def get_profiles(self):
         try:
-            info = requests.get(f"{BASE_URL}/profile").json()
+            info = requests.get(f"{V2_URL}/profile").json()
         except JSONDecodeError:
             print('Unable to get profiles')
             return None
 
         return info
+
+    # make a function to stop a profile
+    # will return true or false based on close status
+    def stop_profile(self, profile_id):
+        raw = requests.get(f"{V1_URL}/stop",
+                           params={'profileId': profile_id})
+
+        if raw.status_code == 200:
+            print(f"Stop profile response: {raw.json()}")
+            if raw.json()['status'] == 'ERROR':
+                print(raw.json())
+                return False
+            else:
+                return True
+        else:
+            return False
+
+    # make a function to check if a profile is active (based on the id)
+    def is_profile_active(self, profile_id):
+        raw = requests.get(f"{V1_URL}/active")
+
+        if raw.status_code == 200:
+            return True
+        else:
+            return False
 
 
 # make a function that creates a Multilogin browser
