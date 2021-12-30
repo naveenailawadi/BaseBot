@@ -1,7 +1,7 @@
 from core.constants import BOTTOM_PIXELS, DEFAULT_WAIT_INCREMENT
 from core.BaseBot.platforms.Multilogin import create_mla_browser
 from core.BaseBot.platforms.gologin import create_gologin_browser
-from selenium.common.exceptions import ElementNotInteractableException, ElementClickInterceptedException
+from selenium.common.exceptions import ElementNotInteractableException, ElementClickInterceptedException, NoSuchWindowException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -39,7 +39,7 @@ class Bot:
         elif 'gologin' in platform.lower():
             # open the gologin browser and save the reference to the object (to kill it later)
             self.gl, self.driver = create_gologin_browser(
-                profile_id, token, open_retries, retry_interval, driver_path)
+                profile_id, token, open_retries, retry_interval, chromedriver_path)
         else:
             # open multilogin
             driver = create_mla_browser(
@@ -176,7 +176,10 @@ class Bot:
 
     # make a function to switch back to the home tab
     def switch_to_home_tab(self):
-        self.driver.switch_to.window(self.first_tab_handle)
+        try:
+            self.driver.switch_to.window(self.first_tab_handle)
+        except NoSuchWindowException:
+            pass
 
     # close the bot
     def close(self):
