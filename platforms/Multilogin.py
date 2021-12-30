@@ -1,4 +1,4 @@
-from core.Managers import Manager
+from core.BaseBot.platforms.Managers import Manager
 from json.decoder import JSONDecodeError
 from selenium import webdriver
 import requests

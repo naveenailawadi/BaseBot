@@ -1,4 +1,4 @@
-from core.Managers import Manager
+from core.BaseBot.platforms.Managers import Manager
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 import random

@@ -1,7 +1,6 @@
 from core.constants import BOTTOM_PIXELS, DEFAULT_WAIT_INCREMENT
-from core.Multilogin import create_mla_browser
-from core.gologin import create_gologin_browser
-from core.data import *
+from core.BaseBot.platforms.Multilogin import create_mla_browser
+from core.BaseBot.platforms.gologin import create_gologin_browser
 from selenium.common.exceptions import ElementNotInteractableException, ElementClickInterceptedException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys

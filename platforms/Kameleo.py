@@ -1,7 +1,6 @@
-from core.platforms.Managers import Manager
-from core.platforms.kameleoSDK.kameleo.local_api_client.kameleo_local_api_client import KameleoLocalApiClient
-from core.platforms.kameleoSDK.kameleo.local_api_client.builder_for_create_profile import BuilderForCreateProfile
-from json.decoder import JSONDecodeError
+from core.BaseBot.platforms.Managers import Manager
+from kameleo.local_api_client.kameleo_local_api_client import KameleoLocalApiClient
+from kameleo.local_api_client.builder_for_create_profile import BuilderForCreateProfile
 from selenium import webdriver
 import requests
 import time
