@@ -182,9 +182,15 @@ class Bot:
             pass
 
     # close the bot
-    def close(self):
-        print(f"Browser quit started ({self.profile_id})")
-        self.driver.quit()
+    def close(self, close_method='quit'):
+        if close_method == 'keys':
+            print(f"Browser quit with keys started ({self.profile_id})")
+
+            some_tag = self.driver.find_element_by_xpath('//html')
+            some_tag.send_keys(Keys.ALT + Keys.F4)
+        else:
+            print(f"Browser quit with .quit() started ({self.profile_id})")
+            self.driver.quit()
 
         if 'gologin' in self.platform.lower():
             self.gl.stop()
