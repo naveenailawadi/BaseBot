@@ -1,8 +1,10 @@
 from core.BaseBot.platforms.Managers import Manager
 from kameleo.local_api_client.kameleo_local_api_client import KameleoLocalApiClient
 from kameleo.local_api_client.builder_for_create_profile import BuilderForCreateProfile
+from kameleo.local_api_client.models.server_py3 import Server
+from kameleo.local_api_client.models.problem_response_py3 import ProblemResponseException
 from selenium import webdriver
-import requests
+import traceback
 import time
 
 # set the default profile
@@ -34,18 +36,15 @@ class KameleoManager(Manager):
         base_profiles = self.client.search_base_profiles(
             device_type=device, os_family=operating_system, browser_product=browser)
 
-        print(
-            f"Base profiles provided ({len(base_profiles)}): {base_profiles}")
+        # get a random proxy
+        proxy = self.random_proxy()
 
-        # make the profile request as res
+        # make the profile request (need proxies)
         create_profile_request = BuilderForCreateProfile.for_base_profile(
-            base_profiles[0].id).set_recommended_defaults().build()
+            base_profiles[0].id).set_recommended_defaults().set_proxy('http', Server(host=proxy['host'], port=int(proxy['port']), id=proxy['username'], secret=proxy['password'])).build()
 
         # make the profile
         profile = self.client.create_profile(body=create_profile_request)
-
-        # start the profile
-        self.client.start_profile(profile.id)
 
         return profile.id
 
@@ -88,54 +87,61 @@ class KameleoManager(Manager):
 
 
 # make a function that creates a Multilogin browser
-def create_mla_browser(profile_id, open_retries, retry_interval):
-    # set a default driver variable
+def create_kameleo_browser(profile_id, open_retries, retry_interval, browser=DEFAULT_BROWSER):
+    # set a browser default
     driver = None
 
-    # loop on retries
-    for i in range(open_retries):
-        # try checking the profile availability
-        try:
-            check_url = 'http://127.0.0.1:35000/api/v1/profile/active'
-            check_params = {'profileId': profile_id}
-            check_resp = requests.get(check_url, check_params)
+    # make the options depending on the browser
+    if browser == 'chrome':
+        options = webdriver.ChromeOptions()
+    elif browser == 'firefox':
+        options = webdriver.FirefoxOptions()
+    elif browser == 'edge':
+        options = webdriver.EdgeOptions()
+    elif browser == 'safari':
+        options = webdriver.SafariOptions()
+    else:
+        # output that there are no options for the given browser and return none (for the browser)
+        print(f"Could not match kameleo with browser type: {browser}")
+        return None
 
-            if check_resp.status_code == 200:
-                # break the loop when verified
-                # this will return true if the browser is already open
-                create = not check_resp.json()['value']
-                break
-            else:
-                create = False
-        except requests.exceptions.ConnectionError:
-            print(
-                f"Failed to open multilogin on port 35000 ({profile_id})")
+    # add the option
+    options.add_experimental_option("kameleo:profileId", profile_id)
+
+    # make a kemeleo manager (does not need proxies)
+    manager = KameleoManager()
+
+    # try opening the bot on a loop
+    for i in range(open_retries):
+
+        try:
+            manager.client.start_profile(profile_id)
+            driver = webdriver.Remote(
+                command_executor=f"{BASE_URL}/webdriver", options=options)
+
+            print('Driver created for ' + profile_id)
+            create = True
+
+            # break the loop on creation
+            break
+        except ProblemResponseException as e:
+            print(f"Kameleo Start {e} ({profile_id})")
+        except Exception:
+            # output the error (for now)
+            traceback.print_exc()
+
             create = False
 
-        # wait for the next one
+        # wait before retrying
         time.sleep(retry_interval)
 
-    if create:
-        # try opening the bot on a loop
-        for i in range(open_retries):
-            mla_url = 'http://127.0.0.1:35000/api/v1/profile/start?automation=true&profileId=' + profile_id
-            resp = requests.get(mla_url)
-            mla_json = resp.json()
-            try:
-                driver = webdriver.Remote(
-                    command_executor=mla_json['value'], desired_capabilities={})
+        # log the attempt
+        print(f"Attempt {i+1} to open {profile_id} failed")
 
-                print('Driver created for ' + profile_id)
-                create = True
-
-                # break the loop on creation
-                break
-            except KeyError:
-                # log the attempt
-                print(f"Attempt {i+1} to open {profile_id} failed")
-                create = False
-
-        if not create:
-            print('No driver created for ' + profile_id)
+    if not create:
+        print('No driver created for ' + profile_id)
+    # else wait for kameleo to spin up the browser
+    else:
+        time.sleep(retry_interval)
 
     return driver

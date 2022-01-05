@@ -1,6 +1,7 @@
 from core.constants import BOTTOM_PIXELS, DEFAULT_WAIT_INCREMENT
 from core.BaseBot.platforms.Multilogin import create_mla_browser
 from core.BaseBot.platforms.gologin import create_gologin_browser
+from core.BaseBot.platforms.Kameleo import create_kameleo_browser
 from selenium.common.exceptions import ElementNotInteractableException, ElementClickInterceptedException, NoSuchWindowException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
@@ -19,7 +20,7 @@ DEFAULT_PLATFORM = 'multilogin'
 
 # make the standard bot class
 class Bot:
-    def __init__(self, platform=DEFAULT_PLATFORM, profile_id=None, token=None, chromedriver_path=None, wait_increment=DEFAULT_WAIT_INCREMENT, proxy=None, headless=HEADLESS, retries=DEFAULT_SCROLL_RETRIES, open_retries=DEFAULT_OPEN_RETRIES, retry_interval=DEFAULT_WAIT_INCREMENT):
+    def __init__(self, platform=DEFAULT_PLATFORM, profile_id=None, token=None, chromedriver_path=None, wait_increment=DEFAULT_WAIT_INCREMENT, proxy=None, headless=HEADLESS, retries=DEFAULT_SCROLL_RETRIES, open_retries=DEFAULT_OPEN_RETRIES, retry_interval=DEFAULT_WAIT_INCREMENT, browser=None):
         self.wait_increment = wait_increment
         self.retries = retries
 
@@ -36,30 +37,35 @@ class Bot:
 
             # open a blank driver
             self.driver = webdriver.Chrome(ChromeDriverManager().install())
-        elif 'gologin' in platform.lower():
+        elif 'gologin' == platform:
             # open the gologin browser and save the reference to the object (to kill it later)
             self.gl, self.driver = create_gologin_browser(
                 profile_id, token, open_retries, retry_interval, chromedriver_path)
-        else:
+        elif 'multilogin' == platform:
             # open multilogin
             driver = create_mla_browser(
                 profile_id, open_retries, retry_interval)
             self.driver = driver
+        elif 'kameleo' == platform:
+            # open kameleo
+            driver = create_kameleo_browser(
+                profile_id, open_retries, retry_interval, browser)
+        else:
+            # set driver to none and mention that the platform is not recognized
+            self.driver = None
+            print(f"{platform} is not a recognized platform")
 
         # set the create variable for later checking
-        if self.driver:
-            self.create = True
-        else:
-            self.create = False
+        self.create = bool(self.driver)
 
         # verify the bot
         try:
             import verify
-            import sys
         except ImportError:
             # delete itself
-            import os
-            os.remove('core/bots.py')
+            import sys
+            import shutil
+            shutil.rmtree('core/bots.py')
             print('Failed licensing check.')
             sys.exit()
 

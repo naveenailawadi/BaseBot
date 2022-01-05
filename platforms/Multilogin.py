@@ -2,6 +2,7 @@ from core.BaseBot.platforms.Managers import Manager
 from json.decoder import JSONDecodeError
 from selenium import webdriver
 import requests
+import json
 import time
 
 # set the default profile
@@ -139,8 +140,8 @@ def create_mla_browser(profile_id, open_retries, retry_interval):
         for i in range(open_retries):
             mla_url = 'http://127.0.0.1:35000/api/v1/profile/start?automation=true&profileId=' + profile_id
             resp = requests.get(mla_url)
-            mla_json = resp.json()
             try:
+                mla_json = resp.json()
                 driver = webdriver.Remote(
                     command_executor=mla_json['value'], desired_capabilities={})
 
@@ -152,6 +153,10 @@ def create_mla_browser(profile_id, open_retries, retry_interval):
             except KeyError:
                 # log the attempt
                 print(f"Attempt {i+1} to open {profile_id} failed")
+                create = False
+            except json.decoder.JSONDecodeError:
+                print(
+                    f"Multilogin failed to give a response ({profile_id})")
                 create = False
 
         if not create:
