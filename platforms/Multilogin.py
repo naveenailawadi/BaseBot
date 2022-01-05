@@ -28,7 +28,7 @@ class MLAManager(Manager):
     # make a function to make the profile
     def make_profile(self, profile=DEFAULT_PROFILE, operating_system=DEFAULT_OS, browser=DEFAULT_BROWSER):
         # set the profile name, os, and browser
-        profile['name'] = f"Random Profile {self.random_string()}"
+        profile['name'] = self.random_name()
         profile['os'] = operating_system
         profile['browser'] = browser
 

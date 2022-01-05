@@ -40,3 +40,7 @@ class Manager:
         proxy['mode'] = 'http'
 
         return proxy
+
+    # make a random name generator
+    def random_name(self):
+        return f"Random Profile {self.random_string()}"

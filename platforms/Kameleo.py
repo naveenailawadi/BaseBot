@@ -50,10 +50,15 @@ class KameleoManager(Manager):
 
     # make a function to delete a profile
     def delete_profile(self, profile_id):
-        self.client.delete_profile(profile_id)
+        try:
+            self.client.delete_profile(profile_id)
+            return True
+        except Exception as e:
+            print(f"Delete {e} ({profile_id})")
 
-        return True
+            return False
 
+    # profiles are not available for kameleo
     def get_profiles(self):
         '''
         try:
@@ -62,7 +67,6 @@ class KameleoManager(Manager):
             print('Unable to get profiles')
             return None
         '''
-        print('Get Profiles disabled for Kameleo')
         return {}
 
     # make a function to stop a profile
@@ -91,22 +95,33 @@ def create_kameleo_browser(profile_id, open_retries, retry_interval, browser=DEF
     # set a browser default
     driver = None
 
+    print(f"Launching browser type: {browser}")
+
     # make the options depending on the browser
     if browser == 'chrome':
         options = webdriver.ChromeOptions()
+
+        # add the options
+        options.add_experimental_option("kameleo:profileId", profile_id)
     elif browser == 'firefox':
         options = webdriver.FirefoxOptions()
+
+        # add the options
+        options.add_argument("kameleo:profileId", profile_id)
     elif browser == 'edge':
         options = webdriver.EdgeOptions()
+
+        # add the options
+        options.add_experimental_option("kameleo:profileId", profile_id)
     elif browser == 'safari':
         options = webdriver.SafariOptions()
+
+        # add the options
+        options.add_experimental_option("kameleo:profileId", profile_id)
     else:
         # output that there are no options for the given browser and return none (for the browser)
         print(f"Could not match kameleo with browser type: {browser}")
         return None
-
-    # add the option
-    options.add_experimental_option("kameleo:profileId", profile_id)
 
     # make a kemeleo manager (does not need proxies)
     manager = KameleoManager()
@@ -125,7 +140,7 @@ def create_kameleo_browser(profile_id, open_retries, retry_interval, browser=DEF
             # break the loop on creation
             break
         except ProblemResponseException as e:
-            print(f"Kameleo Start {e} ({profile_id})")
+            print(f"Kameleo Start {e} ({browser}: {profile_id})")
         except Exception:
             # output the error (for now)
             traceback.print_exc()

@@ -31,7 +31,7 @@ class Bot:
         self.platform = platform
 
         # get a browser profile
-        if not profile_id:
+        if not bool(profile_id):
             # import the test module
             from webdriver_manager.chrome import ChromeDriverManager
 
@@ -50,6 +50,7 @@ class Bot:
             # open kameleo
             driver = create_kameleo_browser(
                 profile_id, open_retries, retry_interval, browser)
+            self.driver = driver
         else:
             # set driver to none and mention that the platform is not recognized
             self.driver = None
