@@ -174,6 +174,24 @@ class Bot:
             element).click()
         hover.perform()
 
+    # make a way to open a new tab
+    def open_tab(self):
+        # open a new tab
+        self.driver.execute_script("window.open('');")
+
+        self.driver.switch_to.window(self.driver.window_handles[1])
+
+        # go to instagram
+        self.go_to_instagram()
+
+    # make a way to close the tab
+    def close_tab(self):
+        # close the tab
+        self.driver.close()
+
+        # switch to the og tab
+        self.driver.switch_to.window(self.driver.window_handles[0])
+
     # make a function to switch back to the home tab
     def switch_to_home_tab(self):
         try:
@@ -188,6 +206,15 @@ class Bot:
 
             some_tag = self.driver.find_element_by_xpath('//html')
             some_tag.send_keys(Keys.ALT + Keys.F4)
+        elif close_method == 'windows':
+            # get the tabs
+            print(f"Browser quit with windows started ({self.profile_id})")
+            handles = self.driver.window_handles
+
+            # close each tab
+            for handle in handles:
+                self.driver.switch_to.window(handle)
+                self.driver.close()
         else:
             print(f"Browser quit with .quit() started ({self.profile_id})")
             self.driver.quit()
