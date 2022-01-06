@@ -107,14 +107,15 @@ def create_kameleo_browser(profile_id, open_retries, retry_interval, browser=DEF
         options = webdriver.FirefoxOptions()
 
         # add the options
-        options.add_argument("kameleo:profileId", profile_id)
+        options.set_preference("kameleo:profileId", profile_id)
+        options.set_preference("kameleo:profileId", profile_id)
     elif browser == 'edge':
         options = webdriver.EdgeOptions()
 
         # add the options
         options.add_experimental_option("kameleo:profileId", profile_id)
     elif browser == 'safari':
-        options = webdriver.SafariOptions()
+        options = webdriver.Safari.Options()
 
         # add the options
         options.add_experimental_option("kameleo:profileId", profile_id)
@@ -122,6 +123,9 @@ def create_kameleo_browser(profile_id, open_retries, retry_interval, browser=DEF
         # output that there are no options for the given browser and return none (for the browser)
         print(f"Could not match kameleo with browser type: {browser}")
         return None
+
+    # disable notifications
+    options.add_argument('--disable-notifications')
 
     # make a kemeleo manager (does not need proxies)
     manager = KameleoManager()
