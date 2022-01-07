@@ -18,7 +18,7 @@ def probability_bool_generator(probability):
 
 # make random waiting function
 def wait_random(min_wait, max_wait):
-    rand_time = random.randint(min_wait, max_wait)
+    rand_time = random.uniform(min_wait, max_wait)
 
     time.sleep(rand_time)
 

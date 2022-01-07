@@ -24,8 +24,9 @@ BASE_URL = 'http://localhost:5050'
 
 # make a manager
 class KameleoManager(Manager):
-    def __init__(self, filename=None):
-        self.import_proxies(filename)
+    def __init__(self, filename=None, proxy=None):
+        # call the parent init
+        super(KameleoManager, self).__init__(filename, proxy)
 
         # make a client to use
         self.client = KameleoLocalApiClient(BASE_URL)
@@ -37,14 +38,19 @@ class KameleoManager(Manager):
             device_type=device, os_family=operating_system, browser_product=browser)
 
         # get a random proxy
-        proxy = self.random_proxy()
+        proxy = self.get_proxy()
 
         # make the profile request (need proxies)
         create_profile_request = BuilderForCreateProfile.for_base_profile(
-            base_profiles[0].id).set_recommended_defaults().set_proxy('http', Server(host=proxy['host'], port=int(proxy['port']), id=proxy['username'], secret=proxy['password'])).build()
+            base_profiles[0].id).set_recommended_defaults().set_proxy('http', Server(host=proxy['host'], port=int(proxy['port']), id=proxy['username'], secret=proxy['password'])).set_launcher('chromium').build()
 
         # make the profile
-        profile = self.client.create_profile(body=create_profile_request)
+        try:
+            profile = self.client.create_profile(body=create_profile_request)
+            print(f"Created browser profile {profile.id} on proxy {proxy}")
+        except Exception as e:
+            print(e)
+            return None
 
         return profile.id
 
@@ -98,6 +104,7 @@ def create_kameleo_browser(profile_id, open_retries, retry_interval, browser=DEF
     print(f"Launching browser type: {browser}")
 
     # make the options depending on the browser
+    '''
     if browser == 'chrome':
         options = webdriver.ChromeOptions()
 
@@ -126,6 +133,11 @@ def create_kameleo_browser(profile_id, open_retries, retry_interval, browser=DEF
 
     # disable notifications
     options.add_argument('--disable-notifications')
+    '''
+    options = webdriver.ChromeOptions()
+
+    # add the options
+    options.add_experimental_option("kameleo:profileId", profile_id)
 
     # make a kemeleo manager (does not need proxies)
     manager = KameleoManager()

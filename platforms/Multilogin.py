@@ -22,8 +22,9 @@ V2_URL = 'http://127.0.0.1:35000/api/v2'
 
 # make a manager
 class MLAManager(Manager):
-    def __init__(self, filename=None):
-        self.import_proxies(filename)
+    def __init__(self, filename=None, proxy=None):
+        # call the parent initialization
+        super(KameleoManager, self).__init__(filename, proxy)
 
     # make a function to make the profile
     def make_profile(self, profile=DEFAULT_PROFILE, operating_system=DEFAULT_OS, browser=DEFAULT_BROWSER):
@@ -32,8 +33,11 @@ class MLAManager(Manager):
         profile['os'] = operating_system
         profile['browser'] = browser
 
+        # get the proxy
+        proxy = self.get_proxy()
+
         # set the profile proxy
-        profile['network'] = {'proxy': self.random_proxy()}
+        profile['network'] = {'proxy': proxy}
 
         # request body is the profile
         try:
@@ -45,7 +49,7 @@ class MLAManager(Manager):
 
         try:
             profile_id = info['uuid']
-            print(f"Created browser profile {profile_id}")
+            print(f"Created browser profile {profile_id} on proxy {proxy}")
         except KeyError:
             print(info)
             profile_id = None
