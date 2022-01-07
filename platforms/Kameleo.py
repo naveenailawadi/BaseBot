@@ -134,7 +134,8 @@ def create_kameleo_browser(profile_id, open_retries, retry_interval, browser=DEF
     # disable notifications
     options.add_argument('--disable-notifications')
     '''
-    options = webdriver.ChromeOptions()
+    options = webdriver.ChromeOptions(
+    )  # using the chromium emulator for everything (per support recommendation)
 
     # add the options
     options.add_experimental_option("kameleo:profileId", profile_id)
