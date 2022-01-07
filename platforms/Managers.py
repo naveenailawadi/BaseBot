@@ -48,11 +48,13 @@ class Manager:
 
     def get_proxy(self):
         if self.proxy:
-            return self.proxy
+            proxy = self.proxy
         else:
             # get a proxy from the dataframe
             proxy = self.proxies_df.sample().to_dict(orient='records')[0]
-            return proxy
+
+        print(f"{type(proxy)} {proxy}")
+        return proxy
 
     # make a random name generator
     def random_name(self):

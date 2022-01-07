@@ -24,10 +24,10 @@ V2_URL = 'http://127.0.0.1:35000/api/v2'
 class MLAManager(Manager):
     def __init__(self, filename=None, proxy=None):
         # call the parent initialization
-        super(KameleoManager, self).__init__(filename, proxy)
+        super(MLAManager, self).__init__(filename, proxy)
 
-    # make a function to make the profile
-    def make_profile(self, profile=DEFAULT_PROFILE, operating_system=DEFAULT_OS, browser=DEFAULT_BROWSER):
+    # make a function to make the profile (takes language parameter to allow integrability across platforms)
+    def make_profile(self, profile=DEFAULT_PROFILE, operating_system=DEFAULT_OS, browser=DEFAULT_BROWSER, language=None):
         # set the profile name, os, and browser
         profile['name'] = self.random_name()
         profile['os'] = operating_system
