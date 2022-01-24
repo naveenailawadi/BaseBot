@@ -8,20 +8,20 @@ DEFAULT_CHARS = 5
 
 # make a default manager class
 class Manager:
-    def __init__(self, filename=None, proxy=None):
-        if filename and (not proxy):
+    def __init__(self, filename=None, current_proxy=None):
+        if filename and (not current_proxy):
             # import the proxies from the file
             self.import_proxies(filename)
 
             # set the own proxy to none
-            self.proxy = None
-        elif proxy:
+            self.current_proxy = None
+        elif current_proxy:
             # get the proxy
-            self.proxy = proxy
+            self.current_proxy = current_proxy
 
             # set the proxy type
-            proxy['type'] = 'HTTP'
-            proxy['mode'] = 'http'
+            self.current_proxy['type'] = 'HTTP'
+            self.current_proxy['mode'] = 'http'
 
     def import_proxies(self, filename):
         # use the filename to open a csv with the proxies
@@ -47,11 +47,11 @@ class Manager:
         return rstring
 
     def get_proxy(self):
-        if not self.proxy:
+        if not self.current_proxy:
             # get a proxy from the dataframe
-            self.proxy = self.proxies_df.sample().to_dict(orient='records')[0]
+            self.current_proxy = self.proxies_df.sample().to_dict(orient='records')[0]
 
-        return self.proxy
+        return self.current_proxy
 
     # make a random name generator
     def random_name(self):

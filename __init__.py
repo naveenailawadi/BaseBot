@@ -78,7 +78,7 @@ class Bot:
             self.first_tab_handle = self.driver.current_window_handle
 
     # go to a proxy site and check it out
-    def checkProxy(self, user, passw):
+    def checkProxy(self):
         self.driver.get(
             'https://www.google.com/search?q=wha+is+my+ip&oq=wha+is+my+ip&aqs=chrome..69i57j0l7.2101j0j7&sourceid=chrome&ie=UTF-8')
         return(self.driver.find_element(By.XPATH,

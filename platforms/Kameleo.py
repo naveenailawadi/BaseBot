@@ -1,3 +1,4 @@
+
 from core.BaseBot.platforms.Managers import Manager
 from kameleo.local_api_client.kameleo_local_api_client import KameleoLocalApiClient
 from kameleo.local_api_client.builder_for_create_profile import BuilderForCreateProfile
@@ -26,16 +27,15 @@ BASE_URL = 'http://localhost:5050'
 
 # make a manager
 class KameleoManager(Manager):
-    def __init__(self, filename=None, proxy=None):
+    def __init__(self, filename=None, current_proxy=None):
         # call the parent init
-        super(KameleoManager, self).__init__(filename, proxy)
+        super(KameleoManager, self).__init__(filename, current_proxy)
 
         # make a client to use
         self.client = KameleoLocalApiClient(BASE_URL)
 
     # make a function to make the profile
     def make_profile(self, profile=DEFAULT_PROFILE, operating_system=DEFAULT_OS, browser=DEFAULT_BROWSER, device=DEFAULT_DEVICE, language=DEFAULT_LANGUAGE):
-        print('making profiles')
         # get all the base profiles that can be used
         base_profiles = self.client.search_base_profiles(
             device_type=device, os_family=operating_system, browser_product=browser, language=language)
@@ -54,8 +54,6 @@ class KameleoManager(Manager):
         except Exception as e:
             print(e)
             return None
-
-        print('made profile')
 
         return profile.id
 
