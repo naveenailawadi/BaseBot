@@ -1,4 +1,3 @@
-from core.constants import BOTTOM_PIXELS, DEFAULT_WAIT_INCREMENT
 from core.BaseBot.platforms.Multilogin import create_mla_browser
 from core.BaseBot.platforms.gologin import create_gologin_browser
 from core.BaseBot.platforms.Kameleo import create_kameleo_browser
@@ -13,15 +12,21 @@ import time
 # change to make headless or not
 HEADLESS = False
 
+DEFAULT_WAIT_INCREMENT = 5
+DEFAULT_SCROLL_INCREMENT = 1
 DEFAULT_SCROLL_RETRIES = 100
 DEFAULT_OPEN_RETRIES = 10
 DEFAULT_PLATFORM = 'multilogin'
 
+# set to really high number to load everything
+BOTTOM_PIXELS = 100000000
+
 
 # make the standard bot class
 class Bot:
-    def __init__(self, platform=DEFAULT_PLATFORM, profile_id=None, token=None, chromedriver_path=None, wait_increment=DEFAULT_WAIT_INCREMENT, proxy=None, headless=HEADLESS, retries=DEFAULT_SCROLL_RETRIES, open_retries=DEFAULT_OPEN_RETRIES, retry_interval=DEFAULT_WAIT_INCREMENT, browser=None):
+    def __init__(self, platform=DEFAULT_PLATFORM, profile_id=None, token=None, chromedriver_path=None, wait_increment=DEFAULT_WAIT_INCREMENT, proxy=None, headless=HEADLESS, retries=DEFAULT_SCROLL_RETRIES, scroll_increment=DEFAULT_SCROLL_INCREMENT, open_retries=DEFAULT_OPEN_RETRIES, retry_interval=DEFAULT_WAIT_INCREMENT, browser=None):
         self.wait_increment = wait_increment
+        self.scroll_increment = scroll_increment
         self.retries = retries
 
         # save it for logs
@@ -142,7 +147,7 @@ class Bot:
             self.driver.execute_script(
                 f"window.scrollTo(0, {BOTTOM_PIXELS});")
             print(f"Scrolling to bottom ({self.profile_id})")
-            time.sleep(self.wait_increment)
+            time.sleep(self.scroll_increment)
 
         if return_to_top:
             self.driver.execute_script("window.scrollTo(0, 0);")
@@ -171,7 +176,7 @@ class Bot:
             except ElementNotInteractableException:
                 self.driver.execute_script('window.scrollBy(0,250)')
 
-            time.sleep(self.wait_increment / 3)
+            time.sleep(self.scroll_increment)
 
         return clicked
 
@@ -180,6 +185,12 @@ class Bot:
         hover = ActionChains(self.driver).move_to_element(
             element).click()
         hover.perform()
+
+    # make a way to reset the frame
+    def set_frame(self, xpath):
+        # get into the right frame
+        iframe = self.driver.find_element_by_xpath(xpath)
+        self.driver.switch_to.frame(iframe)
 
     # make a way to open a new tab
     def open_tab(self):
