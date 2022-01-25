@@ -13,8 +13,9 @@ class Manager:
             # import the proxies from the file
             self.import_proxies(filename)
 
-            # set the own proxy to none
+            # set the own proxy to a random proxy (allows further integration without nonetype issues)
             self.current_proxy = None
+            self.current_proxy = self.get_proxy()
         elif current_proxy:
             # get the proxy
             self.current_proxy = current_proxy
@@ -49,7 +50,8 @@ class Manager:
     def get_proxy(self):
         if not self.current_proxy:
             # get a proxy from the dataframe
-            self.current_proxy = self.proxies_df.sample().to_dict(orient='records')[0]
+            self.current_proxy = self.proxies_df.sample().to_dict(orient='records')[
+                0]
 
         return self.current_proxy
 
