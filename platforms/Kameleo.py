@@ -48,7 +48,7 @@ class KameleoManager(Manager):
 
         # make the profile request (need proxies)
         create_profile_request = BuilderForCreateProfile.for_base_profile(
-            base_profiles[0].id).set_recommended_defaults().set_proxy('http', Server(host=proxy['host'], port=int(proxy['port']), id=proxy['username'], secret=proxy['password'])).set_launcher('chromium').build()
+            base_profiles[0].id).set_recommended_defaults().set_proxy('http', Server(host=proxy['host'], port=int(proxy['port']), id=proxy['username'], secret=proxy['password'])).build()
 
         # make the profile
         try:
@@ -110,41 +110,25 @@ def create_kameleo_browser(profile_id, open_retries, retry_interval, browser=DEF
     print(f"Launching browser type: {browser}")
 
     # make the options depending on the browser
-    '''
     if browser == 'chrome':
         options = webdriver.ChromeOptions()
-
-        # add the options
-        options.add_experimental_option("kameleo:profileId", profile_id)
-    elif browser == 'firefox':
-        options = webdriver.FirefoxOptions()
-
-        # add the options
-        options.set_preference("kameleo:profileId", profile_id)
-        options.set_preference("kameleo:profileId", profile_id)
     elif browser == 'edge':
         options = webdriver.EdgeOptions()
-
-        # add the options
-        options.add_experimental_option("kameleo:profileId", profile_id)
     elif browser == 'safari':
-        options = webdriver.Safari.Options()
-
-        # add the options
-        options.add_experimental_option("kameleo:profileId", profile_id)
+        options = webdriver.ChromeOptions()
     else:
         # output that there are no options for the given browser and return none (for the browser)
         print(f"Could not match kameleo with browser type: {browser}")
         return None
 
-    # disable notifications
-    options.add_argument('--disable-notifications')
     '''
     options = webdriver.ChromeOptions(
     )  # using the chromium emulator for everything (per support recommendation)
+    '''
 
     # add the options
     options.add_experimental_option("kameleo:profileId", profile_id)
+    options.add_argument('--disable-notifications')
 
     # make a kemeleo manager (does not need proxies)
     manager = KameleoManager()
