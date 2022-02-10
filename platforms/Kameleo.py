@@ -1,4 +1,3 @@
-
 from core.BaseBot.platforms.Managers import Manager
 from kameleo.local_api_client.kameleo_local_api_client import KameleoLocalApiClient
 from kameleo.local_api_client.builder_for_create_profile import BuilderForCreateProfile
@@ -39,6 +38,10 @@ class KameleoManager(Manager):
         # get all the base profiles that can be used
         base_profiles = self.client.search_base_profiles(
             device_type=device, os_family=operating_system, browser_product=browser, language=language)
+
+        # return that there are no base profiles if that is the case
+        if len(base_profiles) == 0:
+            return None
 
         # get a random proxy
         proxy = self.get_proxy()
