@@ -103,7 +103,7 @@ class Bot:
         for button in buttons:
             button_text = button.text.strip().lower()
 
-            if (('accept' in button_text) or ('ok' in button_text)):
+            if (('accept' in button_text) or ('ok' == button_text)):
                 button.click()
                 print(
                     f"Clicked '{button_text.title()}' to accept cookies on {site} ({self.profile_id})")
