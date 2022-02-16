@@ -180,6 +180,11 @@ class Bot:
 
         return clicked
 
+    # make a function to scroll to a particular element
+    def scroll_to(self, element):
+        self.driver.execute_script(
+            'arguments[0].scrollIntoView(true)', element)
+
     # make a function to hover click
     def hover_click(self, element):
         hover = ActionChains(self.driver).move_to_element(
