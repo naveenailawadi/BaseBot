@@ -1,4 +1,5 @@
 from difflib import SequenceMatcher
+from datetime import datetime as dt
 import random
 import time
 import json
@@ -34,3 +35,25 @@ def load_config(filepath='config.json'):
 # ignores case, checks if strings are similar
 def similar(a, b):
     return SequenceMatcher(None, a.lower(), b.lower()).ratio()
+
+
+# get the time from two text strings
+def string_to_unix_time(date_str=None, time_str=None):
+    # make the date
+    if date_str:
+        date_time = dt.strptime(date_str, '%m/%d/%Y')
+    else:
+        # set the date to today
+        date_time = dt.today()
+
+    # set the time if there is a time string
+    if time_str:
+        stubs = time_str.split(':')
+
+        # set the date time object piecewise
+        date_time.replace(hour=int(stubs[0]), minute=int(stubs[1]))
+
+    # once you have a datetime object, convert it to unix
+    unix = time.mktime(date_time.timetuple())
+
+    return unix
