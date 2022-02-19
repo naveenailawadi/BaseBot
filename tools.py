@@ -57,3 +57,17 @@ def string_to_unix_time(date_str=None, time_str=None):
     unix = time.mktime(date_time.timetuple())
 
     return unix
+
+
+from datetime import datetime as dt
+
+
+# make a standardized string for the current time
+def format_time(now=None):
+    if not now:
+        now = dt.now()
+
+    # create the string
+    time_string = now.strftime("%m-%d-%Y---%H-%M-%S")
+
+    return time_string
