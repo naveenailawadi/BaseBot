@@ -242,5 +242,6 @@ class Bot:
             print(f"Browser quit with .quit() started ({self.profile_id})")
             self.driver.quit()
 
-        if 'gologin' in self.platform.lower():
-            self.gl.stop()
+        if self.platform:
+            if 'gologin' in self.platform.lower():
+                self.gl.stop()
