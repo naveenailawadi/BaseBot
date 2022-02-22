@@ -68,10 +68,7 @@ class Bot:
         try:
             import verify
         except ImportError:
-            # delete itself
             import sys
-            import shutil
-            shutil.rmtree('core/bots.py')
             print('Failed licensing check.')
             sys.exit()
 

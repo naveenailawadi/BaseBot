@@ -1,0 +1,6 @@
+selenium
+pandas
+kameleo.local_api_client
+webdriver-manager
+PyJWT
+licensing
