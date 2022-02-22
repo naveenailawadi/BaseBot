@@ -16,15 +16,22 @@ DEFAULT_PROFILE = {
 DEFAULT_OS = "win"
 DEFAULT_BROWSER = "stealthfox"
 
-V1_URL = 'http://127.0.0.1:35000/api/v1/profile'
-V2_URL = 'http://127.0.0.1:35000/api/v2'
+# set the default urls and ports
+BASE_URL = 'http://127.0.0.1'
+V1_URL_EXT = 'api/v1/profile'
+V2_URL_EXT = 'api/v2'
+DEFAULT_PORT = 35000
 
 
 # make a manager
 class MLAManager(Manager):
-    def __init__(self, filename=None, current_proxy=None):
+    def __init__(self, filename=None, current_proxy=None, port=DEFAULT_PORT):
         # call the parent initialization
         super(MLAManager, self).__init__(filename, current_proxy)
+
+        # set the v1 and v2 urls
+        self.v1_url = f"{BASE_URL}:{port}/{V1_URL_EXT}"
+        self.v2_url = f"{BASE_URL}:{port}/{V2_URL_EXT}"
 
     # make a function to make the profile (takes language parameter to allow integrability across platforms)
     def make_profile(self, profile=DEFAULT_PROFILE, operating_system=DEFAULT_OS, browser=DEFAULT_BROWSER, language=None):

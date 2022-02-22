@@ -21,17 +21,22 @@ DEFAULT_BROWSER = "chrome"  # 'chrome', 'firefox', 'edge', 'safari'
 
 DEFAULT_LANGUAGE = 'en-gb'  # https://www.andiamo.co.uk/resources/iso-language-codes/
 
-BASE_URL = 'http://localhost:5050'
+# base url and port
+BASE_URL = 'http://localhost'
+DEFAULT_PORT = 5050
 
 
 # make a manager
 class KameleoManager(Manager):
-    def __init__(self, filename=None, current_proxy=None):
+    def __init__(self, filename=None, current_proxy=None, port=DEFAULT_PORT):
         # call the parent init
         super(KameleoManager, self).__init__(filename, current_proxy)
 
+        # create a base url from the url and port
+        self.base_url = f"{BASE_URL}:{port}"
+
         # make a client to use
-        self.client = KameleoLocalApiClient(BASE_URL)
+        self.client = KameleoLocalApiClient(self.base_url)
 
     # make a function to make the profile
     def make_profile(self, profile=DEFAULT_PROFILE, operating_system=DEFAULT_OS, browser=DEFAULT_BROWSER, device=DEFAULT_DEVICE, language=DEFAULT_LANGUAGE):
@@ -139,7 +144,7 @@ def create_kameleo_browser(profile_id, open_retries, retry_interval, browser=DEF
         try:
             manager.client.start_profile(profile_id)
             driver = webdriver.Remote(
-                command_executor=f"{BASE_URL}/webdriver", options=options)
+                command_executor=f"{self.base_url}/webdriver", options=options)
 
             print('Driver created for ' + profile_id)
             create = True
