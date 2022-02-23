@@ -95,7 +95,7 @@ class MLAManager(Manager):
     # make a function to stop a profile
     # will return true or false based on close status
     def stop_profile(self, profile_id):
-        raw = requests.get(f"{V1_URL}/stop",
+        raw = requests.get(f"{self.v1_url}/stop",
                            params={'profileId': profile_id})
 
         if raw.status_code == 200:
@@ -110,7 +110,7 @@ class MLAManager(Manager):
 
     # make a function to check if a profile is active (based on the id)
     def is_profile_active(self, profile_id):
-        raw = requests.get(f"{V1_URL}/active")
+        raw = requests.get(f"{self.v1_url}/active")
 
         if raw.status_code == 200:
             return True
@@ -119,7 +119,11 @@ class MLAManager(Manager):
 
 
 # make a function that creates a Multilogin browser
-def create_mla_browser(profile_id, open_retries, retry_interval):
+def create_mla_browser(profile_id, open_retries, retry_interval, port=None):
+    # if no port is specified add one (this is better as it allows this function to be used in a constructor)
+    if not port:
+        port = DEFAULT_PORT
+
     # set a default driver variable
     driver = None
 
@@ -127,7 +131,7 @@ def create_mla_browser(profile_id, open_retries, retry_interval):
     for i in range(open_retries):
         # try checking the profile availability
         try:
-            check_url = 'http://127.0.0.1:35000/api/v1/profile/active'
+            check_url = f"http://127.0.0.1:{port}/api/v1/profile/active"
             check_params = {'profileId': profile_id}
             check_resp = requests.get(check_url, check_params)
 
@@ -140,7 +144,7 @@ def create_mla_browser(profile_id, open_retries, retry_interval):
                 create = False
         except requests.exceptions.ConnectionError:
             print(
-                f"Failed to open multilogin on port 35000 ({profile_id})")
+                f"Failed to open multilogin on port {port} ({profile_id})")
             create = False
 
         # wait for the next one
@@ -149,7 +153,7 @@ def create_mla_browser(profile_id, open_retries, retry_interval):
     if create:
         # try opening the bot on a loop
         for i in range(open_retries):
-            mla_url = 'http://127.0.0.1:35000/api/v1/profile/start?automation=true&profileId=' + profile_id
+            mla_url = f"http://127.0.0.1:{port}/api/v1/profile/start?automation=true&profileId=" + profile_id
             resp = requests.get(mla_url)
             try:
                 mla_json = resp.json()

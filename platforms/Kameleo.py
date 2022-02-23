@@ -108,7 +108,11 @@ class KameleoManager(Manager):
 
 
 # make a function that creates a Multilogin browser
-def create_kameleo_browser(profile_id, open_retries, retry_interval, browser=DEFAULT_BROWSER):
+def create_kameleo_browser(profile_id, open_retries, retry_interval, browser=DEFAULT_BROWSER, port=None):
+    # set the port to something if it has not been set (allows for integration with other constructors)
+    if not port:
+        port = DEFAULT_PORT
+
     # set a browser default
     driver = None
 
@@ -136,7 +140,7 @@ def create_kameleo_browser(profile_id, open_retries, retry_interval, browser=DEF
     options.add_argument('--disable-notifications')
 
     # make a kemeleo manager (does not need proxies)
-    manager = KameleoManager()
+    manager = KameleoManager(port=port)
 
     # try opening the bot on a loop
     for i in range(open_retries):

@@ -24,7 +24,8 @@ BOTTOM_PIXELS = 100000000
 
 # make the standard bot class
 class Bot:
-    def __init__(self, platform=DEFAULT_PLATFORM, profile_id=None, token=None, chromedriver_path=None, wait_increment=DEFAULT_WAIT_INCREMENT, proxy=None, headless=HEADLESS, retries=DEFAULT_SCROLL_RETRIES, scroll_increment=DEFAULT_SCROLL_INCREMENT, open_retries=DEFAULT_OPEN_RETRIES, retry_interval=DEFAULT_WAIT_INCREMENT, browser=None):
+    def __init__(self, platform=DEFAULT_PLATFORM, port=None, profile_id=None, token=None, chromedriver_path=None, wait_increment=DEFAULT_WAIT_INCREMENT, proxy=None, headless=HEADLESS, retries=DEFAULT_SCROLL_RETRIES, scroll_increment=DEFAULT_SCROLL_INCREMENT, open_retries=DEFAULT_OPEN_RETRIES, retry_interval=DEFAULT_WAIT_INCREMENT, browser=None):
+
         self.wait_increment = wait_increment
         self.scroll_increment = scroll_increment
         self.retries = retries
@@ -49,12 +50,12 @@ class Bot:
         elif 'multilogin' == platform:
             # open multilogin
             driver = create_mla_browser(
-                profile_id, open_retries, retry_interval)
+                profile_id, open_retries, retry_interval, port=port)
             self.driver = driver
         elif 'kameleo' == platform:
             # open kameleo
             driver = create_kameleo_browser(
-                profile_id, open_retries, retry_interval, browser)
+                profile_id, open_retries, retry_interval, browser, port=port)
             self.driver = driver
         else:
             # set driver to none and mention that the platform is not recognized
