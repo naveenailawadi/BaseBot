@@ -1,8 +1,11 @@
 from difflib import SequenceMatcher
-from datetime import datetime as dt
+from datetime import datetime as dt, timedelta
 import random
 import time
 import json
+
+DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday',
+                'Thursday', 'Friday', 'Saturday', 'Sunday']
 
 
 # make booleans out of probabilities
@@ -37,11 +40,43 @@ def similar(a, b):
     return SequenceMatcher(None, a.lower(), b.lower()).ratio()
 
 
-# get the time from two text strings
-def string_to_unix_time(date_str=None, time_str=None):
+# make a function to get the date from a recent weekday
+def date_from_recent_weekday(weekday_str):
+    # strip and convert the text to titlecase to get accepted by the string interpreter
+    weekday_str = weekday_str.strip().title()
+
+    # get today
+    today = dt.today()
+
+    # get today's weekday
+    today_weekday_int = today.weekday()
+
+    # convert the string into a weekday int
+    weekday_int = DAYS_OF_WEEK.index(weekday_str)
+
+    # get the elapsed number of days
+    elapsed_days = today_weekday_int - weekday_int
+
+    # handle for the negative case (wraparound)
+    if elapsed_days < 0:
+        # add 8 (works mathematically)
+        elapsed_days += 7
+
+    # subtract the number of days using a timedelta
+    date = today - timedelta(days=elapsed_days)
+
+    # return the actual date
+    return date
+
+
+# get the time from text strings
+def string_to_unix_time(date_str=None, weekday_str=None, time_str=None):
     # make the date
     if date_str:
         date_time = dt.strptime(date_str, '%m/%d/%Y')
+    elif weekday_str:
+        # make a weekday with the strptime
+        date_time = date_from_recent_weekday(weekday_str)
     else:
         # set the date to today
         date_time = dt.today()
@@ -51,15 +86,12 @@ def string_to_unix_time(date_str=None, time_str=None):
         stubs = time_str.split(':')
 
         # set the date time object piecewise
-        date_time.replace(hour=int(stubs[0]), minute=int(stubs[1]))
+        date_time = date_time.replace(hour=int(stubs[0]), minute=int(stubs[1]))
 
     # once you have a datetime object, convert it to unix
     unix = time.mktime(date_time.timetuple())
 
     return unix
-
-
-from datetime import datetime as dt
 
 
 # make a standardized string for the current time
