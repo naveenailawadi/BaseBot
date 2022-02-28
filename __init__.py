@@ -21,8 +21,12 @@ DEFAULT_PLATFORM = 'multilogin'
 # set to really high number to load everything
 BOTTOM_PIXELS = 100000000
 
+# set some cookie words to look for
+DEFAULT_COOKIE_WORDS = ['accept', 'ok']
 
 # make the standard bot class
+
+
 class Bot:
     def __init__(self, platform=DEFAULT_PLATFORM, port=None, profile_id=None, token=None, chromedriver_path=None, wait_increment=DEFAULT_WAIT_INCREMENT, proxy=None, headless=HEADLESS, retries=DEFAULT_SCROLL_RETRIES, scroll_increment=DEFAULT_SCROLL_INCREMENT, open_retries=DEFAULT_OPEN_RETRIES, retry_interval=DEFAULT_WAIT_INCREMENT, browser=None):
 
@@ -88,7 +92,7 @@ class Bot:
                                         '//span[@style = "font-size:20px"]').text)
 
     # get many cookies
-    def get_cookie(self, site, browser_interactions):
+    def get_cookie(self, site, browser_interactions, cookie_words=DEFAULT_COOKIE_WORDS):
         # switch to home tab
         self.switch_to_home_tab()
 
@@ -101,7 +105,9 @@ class Bot:
         for button in buttons:
             button_text = button.text.strip().lower()
 
-            if (('accept' in button_text) or ('ok' == button_text)):
+            matches = [word for word in cookie_words if word in button_text]
+
+            if len(matches) > 0:
                 button.click()
                 print(
                     f"Clicked '{button_text.title()}' to accept cookies on {site} ({self.profile_id})")
@@ -133,7 +139,10 @@ class Bot:
             pages_visited += 1
 
     # get many cookies
-    def get_cookies(self, sites, min_browser_interactions, max_browser_interactions):
+    def get_cookies(self, sites, min_browser_interactions, max_browser_interactions, cookie_words=DEFAULT_COOKIE_WORDS):
+        # make the cookie words all lower case and stripped
+        cookie_words = [word.strip().lower() for word in cookie_words]
+
         # goes into the sites
         for site in sites:
             self.get_cookie(site, random.randint(
