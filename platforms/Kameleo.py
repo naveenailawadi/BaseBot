@@ -16,8 +16,12 @@ DEFAULT_PROFILE = {
 }
 
 DEFAULT_DEVICE = "desktop"  # 'desktop', 'mobile'
-DEFAULT_OS = "windows"  # 'windows', 'macos', 'linux', 'android', 'ios'
-DEFAULT_BROWSER = "chrome"  # 'chrome', 'firefox', 'edge', 'safari'
+DEFAULT_OS = "windows"
+DEFAULT_BROWSER = "chrome"
+
+# have the os and browser options
+OS_OPTIONS = ['windows', 'macos', 'linux', 'android', 'ios']
+BROWSER_OPTIONS = ['chrome', 'firefox', 'edge', 'safari']
 
 DEFAULT_LANGUAGE = 'en-gb'  # https://www.andiamo.co.uk/resources/iso-language-codes/
 
@@ -40,6 +44,15 @@ class KameleoManager(Manager):
 
     # make a function to make the profile
     def make_profile(self, profile=DEFAULT_PROFILE, operating_system=DEFAULT_OS, browser=DEFAULT_BROWSER, device=DEFAULT_DEVICE, language=DEFAULT_LANGUAGE):
+        if operating_system not in OS_OPTIONS:
+            print(
+                f"Operating system choice of {operating_system} not in {OS_OPTIONS}")
+            return None
+        if browser not in BROWSER_OPTIONS:
+            print(
+                f"Browser choice of {browser} not in {BROWSER_OPTIONS}")
+            return None
+
         # get all the base profiles that can be used
         base_profiles = self.client.search_base_profiles(
             device_type=device, os_family=operating_system, browser_product=browser, language=language)

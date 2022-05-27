@@ -13,8 +13,13 @@ DEFAULT_PROFILE = {
     }
 }
 
-DEFAULT_OS = "win"
-DEFAULT_BROWSER = "stealthfox"
+# set the default os and browser
+DEFAULT_OS = 'win'
+DEFAULT_BROWSER = 'mimic'
+
+# check the os and browser options
+OS_OPTIONS = ['win', 'mac', 'lin']
+BROWSER_OPTIONS = ['mimic', 'stealthfox']
 
 # set the default urls and ports
 BASE_URL = 'http://127.0.0.1'
@@ -40,15 +45,26 @@ class MLAManager(Manager):
         profile['os'] = operating_system
         profile['browser'] = browser
 
+        # catch any errors from wrong os or browser
+        if profile['os'] not in OS_OPTIONS:
+            print(
+                f"Operating system choice of {profile['os']} not in {OS_OPTIONS}")
+            return None
+        if profile['browser'] not in BROWSER_OPTIONS:
+            print(
+                f"Browser choice of {profile['browser']} not in {BROWSER_OPTIONS}")
+            return None
+
         # get the proxy
         proxy = self.get_proxy()
 
         # set the profile proxy
         profile['network'] = {'proxy': proxy}
+        print(profile)
 
         # request body is the profile
         try:
-            info = requests.post(f"{V2_URL}/profile", json=profile).json()
+            info = requests.post(f"{self.v2_url}/profile", json=profile).json()
             print(f"Make profile response: {info}")
         except JSONDecodeError:
             print(f"Unable to make {profile}")

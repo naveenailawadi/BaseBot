@@ -24,9 +24,8 @@ BOTTOM_PIXELS = 100000000
 # set some cookie words to look for
 DEFAULT_COOKIE_WORDS = ['accept', 'ok']
 
+
 # make the standard bot class
-
-
 class Bot:
     def __init__(self, platform=DEFAULT_PLATFORM, port=None, profile_id=None, token=None, chromedriver_path=None, wait_increment=DEFAULT_WAIT_INCREMENT, proxy=None, headless=HEADLESS, retries=DEFAULT_SCROLL_RETRIES, scroll_increment=DEFAULT_SCROLL_INCREMENT, open_retries=DEFAULT_OPEN_RETRIES, retry_interval=DEFAULT_WAIT_INCREMENT, browser=None):
 
@@ -97,6 +96,10 @@ class Bot:
         self.switch_to_home_tab()
 
         self.driver.get(site)
+        time.sleep(self.wait_increment)
+
+        # set accepted to false
+        accepted_cookie = False
 
         # get all the buttons
         buttons = self.driver.find_elements_by_xpath('//button')
@@ -108,11 +111,19 @@ class Bot:
             matches = [word for word in cookie_words if word in button_text]
 
             if len(matches) > 0:
-                button.click()
-                print(
-                    f"Clicked '{button_text.title()}' to accept cookies on {site} ({self.profile_id})")
-                time.sleep(self.wait_increment)
-                break
+                try:
+                    button.click()
+                    print(
+                        f"Clicked '{button_text.title()}' to accept cookies on {site} ({self.profile_id})")
+                    accepted_cookie = True
+                    time.sleep(self.wait_increment)
+                    break
+                except ElementClickInterceptedException:
+                    print(f"Click to accept cookie denied on {site}")
+                    pass
+
+        if not accepted_cookie:
+            print(f"Did not find cookies to accept on {site}")
 
         # if cookies have been accepted, attempt to click the a tags
         a_tags = self.driver.find_elements_by_xpath('//a')
@@ -146,7 +157,7 @@ class Bot:
         # goes into the sites
         for site in sites:
             self.get_cookie(site, random.randint(
-                min_browser_interactions, max_browser_interactions))
+                min_browser_interactions, max_browser_interactions), cookie_words=cookie_words)
 
     # make a function to scroll if necessary
     def scroll(self, scrolls=1, return_to_top=False):
