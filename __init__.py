@@ -8,6 +8,7 @@ from selenium.webdriver.common.by import By
 from selenium import webdriver
 import random
 import time
+import eel
 
 # change to make headless or not
 HEADLESS = False
@@ -96,7 +97,7 @@ class Bot:
         self.switch_to_home_tab()
 
         self.driver.get(site)
-        time.sleep(self.wait_increment)
+        eel.sleep(self.wait_increment)
 
         # set accepted to false
         accepted_cookie = False
@@ -116,7 +117,7 @@ class Bot:
                     print(
                         f"Clicked '{button_text.title()}' to accept cookies on {site} ({self.profile_id})")
                     accepted_cookie = True
-                    time.sleep(self.wait_increment)
+                    eel.sleep(self.wait_increment)
                     break
                 except ElementClickInterceptedException:
                     print(f"Click to accept cookie denied on {site}")
@@ -135,7 +136,7 @@ class Bot:
             # try to visit one, but except it if it is not interactable
             try:
                 random.choice(a_tags).click()
-                time.sleep(self.wait_increment)
+                eel.sleep(self.wait_increment)
 
                 # if this works, get new a tags
                 a_tags = self.driver.find_elements_by_xpath('//a')
@@ -165,7 +166,7 @@ class Bot:
             self.driver.execute_script(
                 f"window.scrollTo(0, {BOTTOM_PIXELS});")
             print(f"Scrolling to bottom ({self.profile_id})")
-            time.sleep(self.scroll_increment)
+            eel.sleep(self.scroll_increment)
 
         if return_to_top:
             self.driver.execute_script("window.scrollTo(0, 0);")
@@ -180,7 +181,7 @@ class Bot:
         for _ in range(self.retries):
             try:
                 element.click()
-                time.sleep(self.wait_increment)
+                eel.sleep(self.wait_increment)
                 clicked = True
                 break
             except ElementNotInteractableException:
@@ -194,7 +195,7 @@ class Bot:
             except ElementNotInteractableException:
                 self.driver.execute_script('window.scrollBy(0,250)')
 
-            time.sleep(self.scroll_increment)
+            eel.sleep(self.scroll_increment)
 
         return clicked
 
@@ -263,3 +264,6 @@ class Bot:
         if self.platform:
             if 'gologin' in self.platform.lower():
                 self.gl.stop()
+
+        # set that the bot is no longer created
+        self.create = False

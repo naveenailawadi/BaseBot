@@ -3,6 +3,7 @@ from datetime import datetime as dt, timedelta
 import random
 import time
 import json
+import os
 
 DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday',
                 'Thursday', 'Friday', 'Saturday', 'Sunday']
@@ -25,6 +26,14 @@ def wait_random(min_wait, max_wait):
     rand_time = random.uniform(min_wait, max_wait)
 
     time.sleep(rand_time)
+
+
+# get the filepath of a random image
+def random_image(folder):
+    # get all the files in the folder
+    files = [f for f in os.listdir(folder) if os.isfile(os.join(folder, f))]
+
+    return random.choice(files)
 
 
 # load config
