@@ -225,9 +225,15 @@ class Bot:
     # make a way to open a new tab
     def open_tab(self):
         # open a new tab
+        '''
+        # with js
         self.driver.execute_script("window.open('');")
 
         self.driver.switch_to.window(self.driver.window_handles[1])
+        '''
+
+        # with selenium
+        self.driver.switch_to.new_window('tab')
 
     # make a way to close the tab
     def close_tab(self):
