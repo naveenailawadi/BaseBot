@@ -103,7 +103,7 @@ class Bot:
         accepted_cookie = False
 
         # get all the buttons
-        buttons = self.driver.find_elements_by_xpath('//button')
+        buttons = self.driver.find_elements(By.XPATH, '//button')
 
         # iterate over the buttons and accept the right cookies
         for button in buttons:
@@ -127,7 +127,7 @@ class Bot:
             print(f"Did not find cookies to accept on {site}")
 
         # if cookies have been accepted, attempt to click the a tags
-        a_tags = self.driver.find_elements_by_xpath('//a')
+        a_tags = self.driver.find_elements(By.XPATH, '//a')
 
         # have a counter of pages visited and tag attempts
         pages_visited = 0
@@ -213,8 +213,14 @@ class Bot:
     # make a way to reset the frame
     def set_frame(self, xpath):
         # get into the right frame
-        iframe = self.driver.find_element_by_xpath(xpath)
+        iframe = self.driver.find_element(By.XPATH, xpath)
         self.driver.switch_to.frame(iframe)
+
+    # function for uploading a file: this is not working
+    def upload_file(self, file_fp):
+        send_input = ActionChains(self.driver)
+        send_input.send_keys(file_fp + Keys.ENTER)
+        send_input.perform()
 
     # make a way to open a new tab
     def open_tab(self):
@@ -222,9 +228,6 @@ class Bot:
         self.driver.execute_script("window.open('');")
 
         self.driver.switch_to.window(self.driver.window_handles[1])
-
-        # go to instagram
-        self.go_to_instagram()
 
     # make a way to close the tab
     def close_tab(self):
@@ -246,7 +249,7 @@ class Bot:
         if close_method == 'keys':
             print(f"Browser quit with keys started ({self.profile_id})")
 
-            some_tag = self.driver.find_element_by_xpath('//html')
+            some_tag = self.driver.find_element(By.XPATH, '//html')
             some_tag.send_keys(Keys.ALT + Keys.F4)
         elif close_method == 'windows':
             # get the tabs

@@ -31,7 +31,8 @@ def wait_random(min_wait, max_wait):
 # get the filepath of a random image
 def random_image(folder):
     # get all the files in the folder
-    files = [f for f in os.listdir(folder) if os.isfile(os.join(folder, f))]
+    files = [f for f in os.listdir(
+        folder) if os.path.isfile(os.path.join(folder, f))]
 
     return random.choice(files)
 
