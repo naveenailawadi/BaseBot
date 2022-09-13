@@ -270,9 +270,8 @@ class Bot:
             print(f"Browser quit with .quit() started ({self.profile_id})")
             self.driver.quit()
 
-        if self.platform:
-            if 'gologin' in self.platform.lower():
-                self.gl.stop()
+        if self.platform == 'gologin':
+            self.gl.stop()
 
         # set that the bot is no longer created
         self.create = False

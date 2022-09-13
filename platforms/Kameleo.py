@@ -88,16 +88,10 @@ class KameleoManager(Manager):
 
             return False
 
-    # profiles are not available for kameleo
+    # get the profile IDs (rest is not useful)
     def get_profiles(self):
-        '''
-        try:
-            info = requests.get(f"{V2_URL}/profile").json()
-        except JSONDecodeError:
-            print('Unable to get profiles')
-            return None
-        '''
-        return {}
+        profiles = self.client.list_profiles()
+        return [{'profile_id': profile.id, 'browser': profile.browser.product} for profile in profiles]
 
     # make a function to stop a profile
     # will return true or false based on close status
@@ -145,9 +139,9 @@ def create_kameleo_browser(profile_id, open_retries, retry_interval, browser=DEF
         options = webdriver.FirefoxOptions()
         options.set_capability('kameleo:profileId', profile_id)
     else:
-        # output that there are no options for the given browser and return none (for the browser)
-        print(f"Could not match kameleo with browser type: {browser}")
-        return None
+        # need to specify browser to start
+        print('Must specify browser to start kameleo profiles.')
+        return
 
     '''
     options = webdriver.ChromeOptions(
@@ -155,7 +149,8 @@ def create_kameleo_browser(profile_id, open_retries, retry_interval, browser=DEF
     '''
 
     # add the options
-    options.add_argument('--disable-notifications')
+    if options:
+        options.add_argument('--disable-notifications')
 
     # make a kemeleo manager (does not need proxies)
     manager = KameleoManager(port=port)
@@ -165,6 +160,8 @@ def create_kameleo_browser(profile_id, open_retries, retry_interval, browser=DEF
 
         try:
             manager.client.start_profile(profile_id)
+
+            # use the options if you have them
             driver = webdriver.Remote(
                 command_executor=f"{manager.base_url}/webdriver", options=options)
 
