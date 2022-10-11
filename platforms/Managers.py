@@ -50,10 +50,10 @@ class Manager:
     def get_proxy(self):
         if not self.current_proxy:
             # get a proxy from the dataframe
-            self.current_proxy = self.proxies_df.sample().to_dict(orient='records')[
+            return self.proxies_df.sample().to_dict(orient='records')[
                 0]
-
-        return self.current_proxy
+        else:
+            return self.current_proxy
 
     # make a random name generator
     def random_name(self):

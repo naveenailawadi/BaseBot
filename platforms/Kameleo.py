@@ -114,7 +114,7 @@ class KameleoManager(Manager):
         return False
 
 
-# make a function that creates a Multilogin browser
+# make a function that creates a Kameleo browser
 def create_kameleo_browser(profile_id, open_retries, retry_interval, browser=DEFAULT_BROWSER, port=None):
     # set the port to something if it has not been set (allows for integration with other constructors)
     if not port:
