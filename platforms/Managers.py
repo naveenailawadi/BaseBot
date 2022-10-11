@@ -13,9 +13,8 @@ class Manager:
             # import the proxies from the file
             self.import_proxies(filename)
 
-            # set the own proxy to a random proxy (allows further integration without nonetype issues)
+            # set the own proxy to a random proxy
             self.current_proxy = None
-            self.current_proxy = self.get_proxy()
         elif current_proxy:
             # get the proxy
             self.current_proxy = current_proxy
