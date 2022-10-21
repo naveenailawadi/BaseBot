@@ -251,7 +251,7 @@ class Bot:
             pass
 
     # close the bot
-    def close(self, close_method='quit'):
+    def close(self, close_method='quit', manager=None):
         if close_method == 'keys':
             print(f"Browser quit with keys started ({self.profile_id})")
 
@@ -266,6 +266,8 @@ class Bot:
             for handle in handles:
                 self.driver.switch_to.window(handle)
                 self.driver.close()
+        elif (close_method == 'api') and (manager):
+            manager.stop_profile(self.profile_id)
         else:
             print(f"Browser quit with .quit() started ({self.profile_id})")
             self.driver.quit()
