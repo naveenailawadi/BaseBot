@@ -81,7 +81,7 @@ class MLAManager(Manager):
 
     # make a function to delete a profile
     def delete_profile(self, profile_id):
-        raw = requests.delete(f"{V2_URL}/profile/{profile_id}")
+        raw = requests.delete(f"{self.v2_url}/profile/{profile_id}")
 
         if raw.status_code == 204:
             # check if there is an error in the json
