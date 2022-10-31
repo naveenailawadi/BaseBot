@@ -139,7 +139,7 @@ class Bot:
                 eel.sleep(self.wait_increment)
 
                 # if this works, get new a tags
-                a_tags = self.driver.find_elements_by_xpath('//a')
+                a_tags = self.driver.find_elements(By.XPATH, '//a')
 
                 # reset the tag attempts counter
                 tag_attempts = 0

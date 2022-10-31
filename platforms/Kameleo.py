@@ -1,8 +1,9 @@
 from core.BaseBot.platforms.Managers import Manager
-from kameleo.local_api_client.kameleo_local_api_client import KameleoLocalApiClient
-from kameleo.local_api_client.builder_for_create_profile import BuilderForCreateProfile
-from kameleo.local_api_client.models.server_py3 import Server
 from kameleo.local_api_client.models.problem_response_py3 import ProblemResponseException
+from kameleo.local_api_client.builder_for_create_profile import BuilderForCreateProfile
+from kameleo.local_api_client.models.save_profile_request_py3 import SaveProfileRequest
+from kameleo.local_api_client.kameleo_local_api_client import KameleoLocalApiClient
+from kameleo.local_api_client.models.server_py3 import Server
 from selenium import webdriver
 import traceback
 import time
@@ -97,6 +98,11 @@ class KameleoManager(Manager):
     # will return true or false based on close status
     def stop_profile(self, profile_id):
         self.client.stop_profile(profile_id)
+
+    # make a function to save a profile (useful when creating kameleo profiles)
+    def save_profile(self, profile_id, export_path):
+        self.client.save_profile(
+            profile_id, body=SaveProfileRequest(path=export_path))
 
     # make a function to check if a profile is active (based on the id)
     def is_profile_active(self, profile_id):
