@@ -1,10 +1,16 @@
 from threading import Thread
 import eel
+import os
 
+
+# set the default at double the cpus
+DEFAULT_MAX_THREADS = os.cpu_count()
 
 # make a function that multithreads simply: https://www.pythontutorial.net/python-concurrency/python-threading/#:~:text=Use%20the%20Python%20threading%20module%20to%20create%20a%20multi%2Dthreaded,complete%20in%20the%20main%20thread.
 # default check all the threads every 5 seconds (this is a bot after all)
-def multithread(function, arg_tuples, max_threads, check_increment=5):
+
+
+def multithread(function, arg_tuples, max_threads=DEFAULT_MAX_THREADS, check_increment=5):
     # create a bunch of threads
     threads = [Thread(target=function, args=arg_tuple)
                for arg_tuple in arg_tuples]
