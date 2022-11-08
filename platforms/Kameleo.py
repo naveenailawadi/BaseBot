@@ -92,7 +92,7 @@ class KameleoManager(Manager):
     # get the profile IDs (rest is not useful)
     def get_profiles(self):
         profiles = self.client.list_profiles()
-        return [{'profile_id': profile.id, 'browser': profile.browser.product, 'name': } for profile in profiles]
+        return [{'profile_id': profile.id, 'browser': profile.browser.product} for profile in profiles]
 
     # make a function to stop a profile
     # will return true or false based on close status
