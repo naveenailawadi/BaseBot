@@ -39,9 +39,14 @@ class MLAManager(Manager):
         self.v2_url = f"{BASE_URL}:{port}/{V2_URL_EXT}"
 
     # make a function to make the profile (takes language parameter to allow integrability across platforms)
-    def make_profile(self, profile=DEFAULT_PROFILE, operating_system=DEFAULT_OS, browser=DEFAULT_BROWSER, language=None):
-        # set the profile name, os, and browser
-        profile['name'] = self.random_name()
+    def make_profile(self, profile=DEFAULT_PROFILE, operating_system=DEFAULT_OS, browser=DEFAULT_BROWSER, device=None, language=None, name=None):
+        # set the name if there is not yet one
+        if not name:
+            profile['name'] = self.random_name()
+        else:
+            profile['name'] = name
+
+        # set the profile os and browser
         profile['os'] = operating_system
         profile['browser'] = browser
 

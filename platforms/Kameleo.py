@@ -44,7 +44,7 @@ class KameleoManager(Manager):
         self.client = KameleoLocalApiClient(self.base_url)
 
     # make a function to make the profile
-    def make_profile(self, profile=DEFAULT_PROFILE, operating_system=DEFAULT_OS, browser=DEFAULT_BROWSER, device=DEFAULT_DEVICE, language=DEFAULT_LANGUAGE):
+    def make_profile(self, profile=DEFAULT_PROFILE, operating_system=DEFAULT_OS, browser=DEFAULT_BROWSER, device=DEFAULT_DEVICE, language=DEFAULT_LANGUAGE, name=None):
         if operating_system not in OS_OPTIONS:
             print(
                 f"Operating system choice of {operating_system} not in {OS_OPTIONS}")
