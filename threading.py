@@ -1,4 +1,5 @@
 from threading import Thread
+import random
 import eel
 import os
 
@@ -10,7 +11,7 @@ DEFAULT_MAX_THREADS = os.cpu_count()
 # default check all the threads every 5 seconds (this is a bot after all)
 
 
-def multithread(function, arg_tuples, max_threads=DEFAULT_MAX_THREADS, check_increment=5):
+def multithread(function, arg_tuples, max_threads=DEFAULT_MAX_THREADS, check_increment=5, min_thread_drip=0, max_thread_drip=0):
     # create a bunch of threads
     threads = [Thread(target=function, args=arg_tuple)
                for arg_tuple in arg_tuples]
@@ -32,6 +33,9 @@ def multithread(function, arg_tuples, max_threads=DEFAULT_MAX_THREADS, check_inc
 
                 # increment the thread start count
                 thread_start_count += 1
+
+                # wait for the thread drip to start another
+                eel.sleep(random.uniform(min_thread_drip, max_thread_drip))
 
         # check if any of the threads have finished --> set them to inactive
         for i in range(len(thread_lives)):
