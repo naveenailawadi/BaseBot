@@ -216,6 +216,22 @@ class Bot:
         iframe = self.driver.find_element(By.XPATH, xpath)
         self.driver.switch_to.frame(iframe)
 
+    # function (shortcut) to clear a field
+    def clear_field(self, xpath):
+        # find the element
+        elem = self.driver.find_element(By.XPATH, xpath)
+
+        # select the text box
+        elem.click()
+        eel.sleep(self.wait_increment / 5)
+
+        # clear the box with keys
+        elem.send_keys(Keys.CONTROL + 'a')
+        elem.send_keys(Keys.DELETE)
+
+        # wait
+        eel.sleep(self.wait_increment / 2)
+
     # function for uploading a file: this is not working
     def upload_file(self, file_fp):
         send_input = ActionChains(self.driver)
