@@ -7,6 +7,7 @@ from kameleo.local_api_client.models.server_py3 import Server
 from selenium import webdriver
 import traceback
 import time
+import eel
 
 # set the default profile
 DEFAULT_PROFILE = {
@@ -96,8 +97,26 @@ class KameleoManager(Manager):
         # call the api to get the profile id associated with each file (wait in between them)
         profiles = self.client.list_profiles()
 
+        # create a list of profiles to export
+        profile_exports = []
+
+        # get the profile fully from the api
+        for profile in profiles:
+            # get a response
+            resp = self.client.read_profile(profile.id)
+
+            # get the full profile response from the sdk
+            new_profile = {'profile_id': profile.id,
+                           'browser': profile.browser.product, 'name': resp.additional_properties['name']}
+
+            # add the profile response to the profile exports
+            profile_exports.append(new_profile)
+
+            # sleep
+            eel.sleep(0.25)
+
         # return the profiles
-        return [{'profile_id': profile.id, 'browser': profile.browser.product, 'name': profile.name} for profile in profiles]
+        return profile_exports
 
     # make a function to stop a profile
     # will return true or false based on close status
