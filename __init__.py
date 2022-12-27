@@ -1,6 +1,7 @@
 from core.BaseBot.platforms.Multilogin import create_mla_browser
 from core.BaseBot.platforms.gologin import create_gologin_browser
 from core.BaseBot.platforms.Kameleo import create_kameleo_browser
+from core.BaseBot.js.text import ADD_TEXT_TO_INPUT
 from selenium.common.exceptions import ElementNotInteractableException, ElementClickInterceptedException, NoSuchWindowException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
@@ -215,6 +216,14 @@ class Bot:
         # get into the right frame
         iframe = self.driver.find_element(By.XPATH, xpath)
         self.driver.switch_to.frame(iframe)
+
+    # make a direct input (takes any type of text, not just utf-8 --> includes emojis)
+    def input_direct(self, text, xpath):
+        # get the input field
+        input_field = self.driver.find_element(By.XPATH, xpath)
+
+        # execute the js with the text
+        self.driver.execute_script(ADD_TEXT_TO_INPUT, input_field, text)
 
     # function (shortcut) to clear a field
     def clear_field(self, xpath):
