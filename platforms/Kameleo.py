@@ -107,7 +107,7 @@ class KameleoManager(Manager):
 
             # get the full profile response from the sdk
             new_profile = {'profile_id': profile.id,
-                           'browser': profile.browser.product, 'name': resp.additional_properties['name']}
+                           'browser': profile.browser.product, 'name': resp.name}
 
             # add the profile response to the profile exports
             profile_exports.append(new_profile)

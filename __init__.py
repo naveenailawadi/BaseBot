@@ -218,12 +218,13 @@ class Bot:
         self.driver.switch_to.frame(iframe)
 
     # make a direct input (takes any type of text, not just utf-8 --> includes emojis)
-    def input_direct(self, text, xpath):
-        # get the input field
-        input_field = self.driver.find_element(By.XPATH, xpath)
-
+    # this can only be called once per page, as the elements will get mixed up
+    def input_direct(self, text, input_field):
         # execute the js with the text
         self.driver.execute_script(ADD_TEXT_TO_INPUT, input_field, text)
+
+        input_field.send_keys('.')
+        input_field.send_keys(Keys.BACKSPACE)
 
     # function (shortcut) to clear a field
     def clear_field(self, xpath):
